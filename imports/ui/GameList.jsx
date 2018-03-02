@@ -36,6 +36,8 @@ export default class GameList extends Component {
   renderPlayers(game) {
     let player1 = game.players.length > 0? game.players[0].username: '(waiting)';
     let player2 = game.players.length > 1? game.players[1].username: '(waiting)';
+    let player3 = game.players.length > 2? game.players[2].username: '(waiting)';
+    let player4 = game.players.length > 3? game.players[3].username: '(waiting)';
     return (
       <div>
         <div>
@@ -43,6 +45,12 @@ export default class GameList extends Component {
         </div>
         <div>
           <i className="user icon"></i> {player2}
+        </div>
+        <div>
+          <i className="user icon"></i> {player3}
+        </div>
+        <div>
+          <i className="user icon"></i> {player4}
         </div>
       </div>
     )

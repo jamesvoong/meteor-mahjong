@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import GameHeader from './GameHeader.jsx';
 import {Game, GameStatuses} from '../api/models/game.js';
 import {userMarkGame} from '../api/methods/games.js';
+import renderHTML from 'react-render-html';
+
 
 export default class GameBoard extends Component {
-  handleCellClick(row, col) {
+  handleTileClick(row, col) {
     let game = this.props.game;
     if (game.currentPlayerIndex() !== game.userIndex(this.props.user)) return;
     userMarkGame.call({gameId: game._id, row: row, col: col});
@@ -14,14 +16,38 @@ export default class GameBoard extends Component {
     this.props.backToGameListHandler();
   }
 
-  renderCell(row, col) {
-    let value = this.props.game.board[row][col];
-    if (value === 0) return (<td>O</td>);
-    if (value === 1) return (<td>X</td>);
-    if (value === null) return (
-      <td onClick={this.handleCellClick.bind(this, row, col)}></td>
-    );
+  renderTile(tileToRender) {
+    var sprintf = require('sprintf-js').sprintf,
+    vsprintf = require('sprintf-js').vsprintf
+
+    let game = this.props.game;
+    for (i=0; i<4; i++) {
+      if (game.players[i].username == this.props.user.username) {
+        login_player = i;
+      }
+    }
+
+    var hand_render = '';
+    i=0;
+    while(i<14 && game.hand_tiles[login_player][i] != null) {
+      console.log(i);
+      hand_render += sprintf('<img border=\"0\" height=\"50\" hspace=\"0\" src=\"/images/%d.jpg\" width=\"35\" />\n', game.hand_tiles[login_player][i]);
+      i++;
+    }
+
+
+    //if (value === null) return (
+    // <td onClick={this.handleTileClick.bind(this)}></td>
+    //);
+
+    console.log(hand_render);
+    return (
+      renderHTML(hand_render)
+       //<img src={source}/
+    )
   }
+
+  
 
   renderStatus() {
     let game = this.props.game;
@@ -70,27 +96,10 @@ export default class GameBoard extends Component {
         </div>
 
         <div className="ui attached segment">
-          <table className="game-board">
-            <tbody>
-              <tr>
-                {this.renderCell(0, 0)}
-                {this.renderCell(0, 1)}
-                {this.renderCell(0, 2)}
-              </tr>
-              <tr>
-                {this.renderCell(1, 0)}
-                {this.renderCell(1, 1)}
-                {this.renderCell(1, 2)}
-              </tr>
-              <tr>
-                {this.renderCell(2, 0)}
-                {this.renderCell(2, 1)}
-                {this.renderCell(2, 2)}
-              </tr>
-            </tbody>
-          </table>
+          {this.renderTile()}
         </div>
       </div>
     )
   }
 }
+

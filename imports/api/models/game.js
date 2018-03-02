@@ -29,6 +29,36 @@ export class Game {
       this.status = GameStatuses.WAITING;
       this.board = [[null, null, null], [null, null, null], [null, null, null]];
       this.players = [];
+      
+      //Create undrawn tile order
+      this.undrawn_tiles = Array();
+      for (i=0; i < 34; i++) {
+        for (j=0; j < 4; j++) {
+          this.undrawn_tiles.push(i);
+        }
+      }
+      for (i=34; i<42; i++) {
+        this.undrawn_tiles.push(i);
+      }
+      this.undrawn_tiles = shuffle(this.undrawn_tiles);
+
+      //Distribute between the four players
+      for (this.hand_tiles=[]; this.hand_tiles.push([])<4;);
+      for (i=0; i < 4; i++) {
+        for (j=0; j < 13; j++) {
+          console.log(i)
+          console.log(j)
+          this.hand_tiles[i][j] = this.undrawn_tiles.pop();
+        }
+        this.hand_tiles[i].sort();
+      }      
+
+      console.log(this.undrawn_tiles.length)
+      console.log(this.hand_tiles.length)
+      console.log(this.hand_tiles[0].length)
+      console.log(this.hand_tiles[1].length)
+      console.log(this.hand_tiles[2].length)
+      console.log(this.hand_tiles[3].length)
     }
   }
 
@@ -38,7 +68,7 @@ export class Game {
    * @return {[]String] List of fields required persistent storage
    */
   persistentFields() {
-    return ['status', 'board', 'players'];
+    return ['status', 'board', 'players', 'played_tiles', 'undrawn_tiles', 'hand_tiles', 'player_complete_tiles', 'current_player'];
   }
 
 /**
@@ -59,8 +89,8 @@ this.players.push({
       username: user.username
     });
 
-// game automatically start with 2 players
-    if (this.players.length === 2) {
+// game automatically start with 4 players
+    if (this.players.length === 4) {
       this.status = GameStatuses.STARTED;
     }
   }
@@ -192,4 +222,23 @@ this.players.push({
     }
     return filledCount;
   }
+}
+
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
 }
